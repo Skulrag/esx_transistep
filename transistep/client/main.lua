@@ -764,15 +764,17 @@ function OpenGetStocksMenu(storing)
             })
         end
 
-        for i = 1, #inventory.weapons, 1 do
-            local weapon = inventory.weapons[i]
+        if storing == 'society_transistep' then
+            for i = 1, #inventory.weapons, 1 do
+                local weapon = inventory.weapons[i]
 
-            table.insert(elements, {
-                label = ESX.GetWeaponLabel(weapon.name) .. ' [' .. weapon.ammo .. ']',
-                type = 'item_weapon',
-                value = weapon.name,
-                ammo = weapon.ammo
-            })
+                table.insert(elements, {
+                    label = ESX.GetWeaponLabel(weapon.name) .. ' [' .. weapon.ammo .. ']',
+                    type = 'item_weapon',
+                    value = weapon.name,
+                    ammo = weapon.ammo
+                })
+            end
         end
 
         ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'stocks_menu',
@@ -838,15 +840,17 @@ function OpenPutStocksMenu(storing)
             end
         end
 
-        for i = 1, #inventory.weapons, 1 do
-            local weapon = inventory.weapons[i]
+        if storing == 'society_transistep' then
+            for i = 1, #inventory.weapons, 1 do
+                local weapon = inventory.weapons[i]
 
-            table.insert(elements, {
-                label = weapon.label .. ' [' .. weapon.ammo .. ']',
-                type = 'item_weapon',
-                value = weapon.name,
-                ammo = weapon.ammo
-            })
+                table.insert(elements, {
+                    label = weapon.label .. ' [' .. weapon.ammo .. ']',
+                    type = 'item_weapon',
+                    value = weapon.name,
+                    ammo = weapon.ammo
+                })
+            end
         end
 
         ESX.UI.Menu.Open('default', GetCurrentResourceName(), 'stocks_menu',
