@@ -3,7 +3,7 @@ VALUES ('society_transistep', 'Transistep', 1)
 ;
 
 INSERT INTO `addon_inventory` (name, label, shared)
-VALUES ('society_transistep', 'Transistep', 1) ('society_transistep_warehouse', 'Transistep Dépôt', 1)
+VALUES ('society_transistep', 'Transistep', 1), ('society_transistep_warehouse', 'Transistep Dépôt', 1)
 ;
 
 INSERT INTO `datastore` (name, label, shared) VALUES
