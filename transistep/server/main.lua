@@ -102,9 +102,11 @@ ESX.RegisterServerCallback('transistep:getStockItems', function(_, cb, storing)
     TriggerEvent('esx_addoninventory:getSharedInventory', storing, function(inventory)
         items = inventory.items
     end)
-    TriggerEvent('esx_datastore:getSharedDataStore', storing, function(store)
-        weapons = store.get('weapons') or {}
-    end)
+    if storing == 'society_transistep' then
+        TriggerEvent('esx_datastore:getSharedDataStore', storing, function(store)
+            weapons = store.get('weapons') or {}
+        end)
+    end
     cb({
         items = items,
         weapons = weapons,
