@@ -35,7 +35,7 @@ CREATE TABLE `convoy_registered_list`
     `is_trailer_stored` boolean,
     `is_paid`           boolean,
 
-    PRIMARY KEY (`convoy_id`)
+    PRIMARY KEY (`identifier`)
 );
 
 -- Only if you're using the Unknown Story esx_advanced_garage source code
