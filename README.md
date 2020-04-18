@@ -8,6 +8,8 @@ Need:
 - esx_addoninventory
 - esx_vehicleshop
 - esx_service
+- esx_skin
+- esx_society
 
 ### [FiveM][Job][Private] Transport company and management of raw materials to supply a city.
 
@@ -94,6 +96,8 @@ Besoin de:
 - esx_addoninventory
 - esx_vehicleshop
 - esx_service
+- esx_skin
+- esx_society
 
 ### [FiveM][Job][Private] Entreprise de transport de frêt, stockage et livraison.
 
