@@ -2,7 +2,7 @@ Config = {}
 Config.DrawDistance = 100.0
 Config.Locale = 'fr'
 Config.MaxInService = 8
-Config.MarkerColor = { r = 30, g = 30, b = 128 }
+Config.MarkerColor = { r = 73, g = 51, b = 0 }
 Config.EnablePlayerManagement = true
 Config.EnableESXIdentity = true
 Config.EnableLicenses = true
@@ -34,30 +34,43 @@ Config.Zones = {
         Size = { x = 1.0, y = 1.0, z = 1.0 },
         Type = 22
     },
-    ConvoiRegister = {
+    ConvoyRegister = {
         Pos = { x = -52.56, y = -2523.92, z = 7.40 },
         Size = { x = 1.0, y = 1.0, z = 1.0 },
-        Type = 30
+        Type = 30,
+        BlipType = 477,
+        BlipColour = 20,
+        BlipDesc = 'Enregistrement convoi'
     },
     PopTrailer = {
         Pos = { x = 92.84, y = 6334.78, z = 31.37 },
         Size = { x = 1.5, y = 1.5, z = 1.0 },
-        Type = -1
+        Type = -1,
+        BlipType = 479,
+        BlipColour = 20,
+        BlipDesc = 'Remorque'
     },
     StoreTrailer = {
         Pos = { x = -147.57, y = -2478.24, z = 6.02 },
         Size = { x = 3.0, y = 3.0, z = 1.0 },
-        Type = -1
+        Type = -1,
+        BlipType = 478,
+        BlipColour = 20,
+        BlipDesc = 'Entrepôt'
     },
     GetPaid = {
         Pos = { x = -105.99, y = -2496.54, z = 6.00 },
         Size = { x = 3.0, y = 3.0, z = 1.0 },
-        Type = -1
+        Type = -1,
+        BlipType = 500,
+        BlipColour = 2,
+        BlipDesc = 'Paie'
     },
     StorageWarehouse = {
         Pos = { x = -126.99, y = -2530.46, z = 6.00 },
         Size = { x = 1.0, y = 1.0, z = 1.0 },
-        Type = 30
+        Type = 30,
+        BlipType = 0
     }
 }
 
@@ -87,7 +100,7 @@ Config.Uniforms = {
         }
     },
 
-    transporter_wear = {
+    carrier_wear = {
         male = {
             ['tshirt_1'] = 76, ['tshirt_2'] = 0,
             ['torso_1'] = 156, ['torso_2'] = 0,
@@ -217,11 +230,9 @@ Config.Pay = {
     },
 }
 
-
 Config.numberItemsPerTrailerStored = 50
 
 Config.itemsList = {
     'bread',
-    'hamburger',
     'water'
 }

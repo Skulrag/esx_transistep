@@ -12,14 +12,16 @@ local Keys = {
 
 ESX = nil
 local PlayerData = {}
+local PlayerDataLoaded = false
 local HasAlreadyEnteredMarker, LastZone = false, nil
 local CurrentAction, CurrentActionMsg
 local CurrentActionData = {}
 local playerInService = false
 local spawnedVehicles, isInShopMenu = {}, false
-local convoi
+local convoy
 local onJob, popedTrailer, jobDone = false, false, false
 local trailerPoped
+local blipPay, blipStoreTrailer, blipPopTrailer
 
 Citizen.CreateThread(function()
     while ESX == nil do
@@ -32,13 +34,14 @@ Citizen.CreateThread(function()
         Citizen.Wait(10)
     end
     PlayerData = ESX.GetPlayerData()
+    PlayerDataLoaded = true
 end)
 
 RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(xPlayer)
     PlayerData = xPlayer
     TriggerServerEvent('transistep:popTrailer', PlayerData.identifier)
-    TriggerServerEvent('transistep:registerConvoi', PlayerData.identifier, 0)
+    TriggerServerEvent('transistep:registerConvoy', PlayerData.identifier, 0)
     ESX.TriggerServerCallback('esx_service:isInService', function(isInService)
         if isInService then
             playerInService = false
@@ -53,7 +56,7 @@ RegisterNetEvent('esx:setJob')
 AddEventHandler('esx:setJob', function(job)
     PlayerData.job = job
     TriggerServerEvent('transistep:popTrailer', PlayerData.identifier)
-    TriggerServerEvent('transistep:registerConvoi', PlayerData.identifier, 0)
+    TriggerServerEvent('transistep:registerConvoy', PlayerData.identifier, 0)
     ESX.TriggerServerCallback('esx_service:isInService', function(isInService)
         if isInService then
             playerInService = false
@@ -107,15 +110,18 @@ function OpenCloakroomMenu()
                                 }
                                 TriggerServerEvent('esx_service:notifyAllInService', notification, 'transistep')
                                 TriggerServerEvent('esx_service:disableService', 'transistep')
-                                TriggerServerEvent('transistep:registerConvoi', PlayerData.identifier, 0)
+                                TriggerServerEvent('transistep:registerConvoy', PlayerData.identifier, 0)
                                 onJob = false
                                 ESX.ShowNotification(_U('service_out'))
+                                DisplayBlip(blipPopTrailer, 0)
+                                DisplayBlip(blipStoreTrailer, 0)
+                                DisplayBlip(blipPay, 0)
                             end
                         end, 'transistep')
                     end
                 end
                 if Config.MaxInService ~= -1 and data.current.value ~= 'citizen_wear' then
-                    local serviceOk = 'waiting'
+                    local serviceOk = false
 
                     ESX.TriggerServerCallback('esx_service:isInService', function(isInService)
                         if not isInService then
@@ -135,13 +141,26 @@ function OpenCloakroomMenu()
                                     }
                                     TriggerServerEvent('esx_service:notifyAllInService', notification, 'transistep')
                                     ESX.ShowNotification(_U('service_in'))
+                                    DisplayBlip(Config.Zones.StoreTrailer.BlipType,
+                                            Config.Zones.StoreTrailer.BlipColour,
+                                            Config.Zones.StoreTrailer.Pos.x,
+                                            Config.Zones.StoreTrailer.Pos.y,
+                                            Config.Zones.StoreTrailer.Pos.z,
+                                            Config.Zones.StoreTrailer.BlipDesc)
+                                    DisplayBlip(Config.Zones.GetPaid.BlipType,
+                                            Config.Zones.GetPaid.BlipColour,
+                                            Config.Zones.GetPaid.Pos.x,
+                                            Config.Zones.GetPaid.Pos.y,
+                                            Config.Zones.GetPaid.Pos.z,
+                                            Config.Zones.GetPaid.BlipDesc)
+
                                 end
                             end, 'transistep')
                         else
                             serviceOk = true
                         end
                     end, 'transistep')
-                    while type(serviceOk) == 'string' do
+                    while not serviceOk do
                         Citizen.Wait(5)
                     end
 
@@ -556,7 +575,7 @@ AddEventHandler('transistep:hasEnteredMarker', function(zone)
         CurrentAction = 'boss_actions_menu'
         CurrentActionMsg = _U('boss_actions')
         CurrentActionData = {}
-    elseif zone == 'ConvoiRegister' then
+    elseif zone == 'ConvoyRegister' then
         CurrentAction = 'convreg_menu'
         CurrentActionMsg = _U('convreg_menu')
         CurrentActionData = {}
@@ -629,6 +648,10 @@ function OpenMobiletransistepActionsMenu()
     end)
 end
 
+function DisplayBlip(blip, display)
+    SetBlipDisplay(blip, display)
+end
+
 -- Display Blips
 Citizen.CreateThread(function()
     local blip = AddBlipForCoord(Config.Blip.Pos.x, Config.Blip.Pos.y, Config.Blip.Pos.z)
@@ -642,8 +665,40 @@ Citizen.CreateThread(function()
     BeginTextCommandSetBlipName("STRING")
     AddTextComponentString('Transistep')
     EndTextCommandSetBlipName(blip)
-end)
 
+    blipPay = AddBlipForCoord(Config.Zones.GetPaid.Pos.x, Config.Zones.GetPaid.Pos.y, Config.Zones.GetPaid.Pos.z)
+    SetBlipSprite(blipPay, Config.Zones.GetPaid.BlipType)
+    SetBlipDisplay(blipPay, 0)
+    SetBlipScale(blipPay, 0.7)
+    SetBlipColour(blipPay, Config.Zones.GetPaid.BlipColour)
+    SetBlipAsShortRange(blipPay, true)
+
+    BeginTextCommandSetBlipName("STRING")
+    AddTextComponentString(Config.Zones.GetPaid.BlipDesc)
+    EndTextCommandSetBlipName(blipPay)
+
+    blipStoreTrailer = AddBlipForCoord(Config.Zones.StoreTrailer.Pos.x, Config.Zones.StoreTrailer.Pos.y, Config.Zones.StoreTrailer.Pos.z)
+    SetBlipSprite(blipStoreTrailer, Config.Zones.StoreTrailer.BlipType)
+    SetBlipDisplay(blipStoreTrailer, 0)
+    SetBlipScale(blipStoreTrailer, 0.7)
+    SetBlipColour(blipStoreTrailer, Config.Zones.StoreTrailer.BlipColour)
+    SetBlipAsShortRange(blipStoreTrailer, true)
+
+    BeginTextCommandSetBlipName("STRING")
+    AddTextComponentString(Config.Zones.StoreTrailer.BlipDesc)
+    EndTextCommandSetBlipName(blipStoreTrailer)
+
+    blipPopTrailer = AddBlipForCoord(Config.Zones.PopTrailer.Pos.x, Config.Zones.PopTrailer.Pos.y, Config.Zones.PopTrailer.Pos.z)
+    SetBlipSprite(blipPopTrailer, Config.Zones.PopTrailer.BlipType)
+    SetBlipDisplay(blipPopTrailer, 0)
+    SetBlipScale(blipPopTrailer, 0.7)
+    SetBlipColour(blipPopTrailer, Config.Zones.PopTrailer.BlipColour)
+    SetBlipAsShortRange(blipPopTrailer, true)
+
+    BeginTextCommandSetBlipName("STRING")
+    AddTextComponentString(Config.Zones.PopTrailer.BlipDesc)
+    EndTextCommandSetBlipName(blipPopTrailer)
+end)
 
 -- Draw Marker
 Citizen.CreateThread(function()
@@ -668,7 +723,6 @@ Citizen.CreateThread(function()
         end
     end
 end)
-
 
 -- Key Controls
 Citizen.CreateThread(function()
@@ -702,7 +756,7 @@ Citizen.CreateThread(function()
             elseif CurrentAction == 'convreg_menu' then
                 ESX.ShowHelpNotification(CurrentActionMsg)
                 if IsControlJustReleased(0, Keys['E']) then
-                    OpenConvoisMenu()
+                    OpenConvoysMenu()
                 end
             elseif CurrentAction == 'pop_trailer' and onJob then
                 ESX.ShowHelpNotification(CurrentActionMsg)
@@ -723,7 +777,6 @@ Citizen.CreateThread(function()
         end
     end
 end)
-
 
 -- Coffre
 function OpenRoomMenu(property, storing)
@@ -898,8 +951,8 @@ function OpenPutStocksMenu(storing)
     end)
 end
 
-function OpenConvoisMenu()
-    ESX.TriggerServerCallback('transistep:getConvois', function(convois)
+function OpenConvoysMenu()
+    ESX.TriggerServerCallback('transistep:getConvoys', function(convois)
         local elements = {
             head = { _U('convoy_menu_title1'), _U('convoy_menu_title2'), _U('convoy_menu_title3') },
             rows = {}
@@ -927,19 +980,23 @@ function OpenConvoisMenu()
             end
         end
         ESX.UI.Menu.Open('list', GetCurrentResourceName(), 'convois', elements, function(data, menu)
-            convoi = data.data.name
+            convoy = data.data.name
 
             if data.value == 'register' then
                 menu.close()
-                TriggerServerEvent('transistep:registerConvoi', PlayerData.identifier, convoi)
+                TriggerServerEvent('transistep:registerConvoy', PlayerData.identifier, convoy)
                 Config.Zones.PopTrailer.Type = 27
                 onJob = true
                 popedTrailer = false
+                DisplayBlip(blipPopTrailer, 2)
             elseif data.value == 'unregister' then
                 menu.close()
-                TriggerServerEvent('transistep:unregisterConvoi', PlayerData.identifier, convoi)
+                TriggerServerEvent('transistep:unregisterConvoy', PlayerData.identifier, convoy)
                 Config.Zones.PopTrailer.Type = -1
                 onJob = false
+                DisplayBlip(blipPopTrailer, 0)
+                DisplayBlip(blipStoreTrailer, 0)
+                DisplayBlip(blipPay, 0)
             end
         end, function(_, menu)
             menu.close()
@@ -954,6 +1011,8 @@ function PopTrailer()
             trailerPoped = trailer
             Config.Zones.PopTrailer.Type = -1
             Config.Zones.StoreTrailer.Type = 27
+            DisplayBlip(blipStoreTrailer, 2)
+            DisplayBlip(blipPopTrailer, 0)
             TriggerServerEvent('transistep:popTrailer', PlayerData.identifier)
         end)
     else
@@ -969,14 +1028,17 @@ function StoreTrailer()
         jobDone = true
         Config.Zones.StoreTrailer.Type = -1
         Config.Zones.GetPaid.Type = 29
+        DisplayBlip(blipStoreTrailer, 0)
+        DisplayBlip(blipPay, 2)
         TriggerServerEvent('transistep:storeTrailer', PlayerData.identifier)
     end
 end
 
 function GetPaid()
-    TriggerServerEvent('transistep:getPaidJob', PlayerData.identifier, convoi)
+    TriggerServerEvent('transistep:getPaidJob', PlayerData.identifier, convoy)
     jobDone = false
     Config.Zones.GetPaid.Type = -1
     Citizen.Wait(1000)
-    TriggerServerEvent('transistep:checkIfConvoyEnded', convoi)
+    TriggerServerEvent('transistep:checkIfConvoyEnded', convoy)
+    DisplayBlip(blipPay, 0)
 end

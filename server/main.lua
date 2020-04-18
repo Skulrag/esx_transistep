@@ -210,44 +210,44 @@ AddEventHandler('transistep:message', function(target, msg)
 end)
 
 
-RegisterServerEvent('transistep:registerConvoi')
-AddEventHandler('transistep:registerConvoi', function(identifier, idConvoi)
+RegisterServerEvent('transistep:registerConvoy')
+AddEventHandler('transistep:registerConvoy', function(identifier, idConvoy)
     local xPlayer = ESX.GetPlayerFromIdentifier(identifier)
 
     local result = MySQL.Sync.fetchAll('SELECT * FROM `convoy_registered_list` WHERE identifier = @identifier', {
         ['@identifier'] = identifier })
     if result[1] then
-        MySQL.Sync.execute('UPDATE `convoy_registered_list` SET `convoy_id`=@idConvoi WHERE identifier = @identifier', {
+        MySQL.Sync.execute('UPDATE `convoy_registered_list` SET `convoy_id`=@idConvoy WHERE identifier = @identifier', {
             ['@identifier'] = identifier,
-            ['@idConvoi'] = idConvoi
+            ['@idConvoy'] = idConvoy
         }, function(_)
         end)
     else
-        MySQL.Async.execute('INSERT INTO `convoy_registered_list`(`identifier`, `is_trailer_stored`, `convoy_id`) VALUES (@identifier, false, @idConvoi)', {
+        MySQL.Async.execute('INSERT INTO `convoy_registered_list`(`identifier`, `is_trailer_stored`, `convoy_id`) VALUES (@identifier, false, @idConvoy)', {
             ['@identifier'] = identifier,
-            ['@idConvoi'] = idConvoi
+            ['@idConvoy'] = idConvoy
         }, function(_)
         end)
     end
 end)
 
 
-RegisterServerEvent('transistep:unregisterConvoi')
-AddEventHandler('transistep:unregisterConvoi', function(identifier, idConvoi)
+RegisterServerEvent('transistep:unregisterConvoy')
+AddEventHandler('transistep:unregisterConvoy', function(identifier, idConvoy)
     local xPlayer = ESX.GetPlayerFromIdentifier(identifier)
 
-    local result = MySQL.Sync.fetchAll('SELECT * FROM `convoy_registered_list` WHERE identifier = @identifier AND convoy_id = @idConvoi', {
+    local result = MySQL.Sync.fetchAll('SELECT * FROM `convoy_registered_list` WHERE identifier = @identifier AND convoy_id = @idConvoy', {
         ['@identifier'] = identifier,
-        ['@idConvoi'] = idConvoi
+        ['@idConvoy'] = idConvoy
     })
     if result[1] then
-        MySQL.Sync.execute('UPDATE `convoy_registered_list` SET `convoy_id`=@idConvoi WHERE identifier = @identifier', {
+        MySQL.Sync.execute('UPDATE `convoy_registered_list` SET `convoy_id`=@idConvoy WHERE identifier = @identifier', {
             ['@identifier'] = identifier,
-            ['@idConvoi'] = 0
+            ['@idConvoy'] = 0
         }, function(_)
         end)
     else
-        TriggerClientEvent('esx:showNotification', xPlayer.source, 'Vous êtes n\'êtes pas inscrit au convoi ' .. idConvoi .. '.')
+        TriggerClientEvent('esx:showNotification', xPlayer.source, 'Vous êtes n\'êtes pas inscrit au convoi ' .. idConvoy .. '.')
     end
 end)
 
@@ -279,9 +279,9 @@ end)
 
 
 RegisterServerEvent('transistep:getPaidJob')
-AddEventHandler('transistep:getPaidJob', function(identifier, convoi)
-    local quantity = MySQL.Sync.fetchScalar('SELECT count(`is_trailer_stored`) FROM `convoy_registered_list` WHERE `convoy_id` = @idConvoi AND `is_trailer_stored` = true', {
-        ['@idConvoi'] = convoi
+AddEventHandler('transistep:getPaidJob', function(identifier, convoy)
+    local quantity = MySQL.Sync.fetchScalar('SELECT count(`is_trailer_stored`) FROM `convoy_registered_list` WHERE `convoy_id` = @idConvoy AND `is_trailer_stored` = true', {
+        ['@idConvoy'] = convoy
     })
 
     local xPlayer = ESX.GetPlayerFromIdentifier(identifier)
@@ -300,29 +300,29 @@ end)
 
 
 RegisterServerEvent('transistep:checkIfConvoyEnded')
-AddEventHandler('transistep:checkIfConvoyEnded', function(convoi)
-    local quantityStored = MySQL.Sync.fetchScalar('SELECT count(`is_trailer_stored`) FROM `convoy_registered_list` WHERE `convoy_id` = @idConvoi AND `is_trailer_stored` = true', {
-        ['@idConvoi'] = convoi
+AddEventHandler('transistep:checkIfConvoyEnded', function(convoy)
+    local quantityStored = MySQL.Sync.fetchScalar('SELECT count(`is_trailer_stored`) FROM `convoy_registered_list` WHERE `convoy_id` = @idConvoy AND `is_trailer_stored` = true', {
+        ['@idConvoy'] = convoy
     })
-    local quantityPaid = MySQL.Sync.fetchScalar('SELECT count(`is_paid`) FROM `convoy_registered_list` WHERE `convoy_id` = @idConvoi AND `is_paid` = true', {
-        ['@idConvoi'] = convoi
+    local quantityPaid = MySQL.Sync.fetchScalar('SELECT count(`is_paid`) FROM `convoy_registered_list` WHERE `convoy_id` = @idConvoy AND `is_paid` = true', {
+        ['@idConvoy'] = convoy
     })
 
     if quantityPaid == quantityStored then
-        MySQL.Sync.execute('UPDATE `convoy_registered_list` SET `is_paid`=false, `is_trailer_stored`=false, `convoy_id`=0 WHERE convoy_id = @convoiId', { ['@convoiId'] = convoi }, function(_)
+        MySQL.Sync.execute('UPDATE `convoy_registered_list` SET `is_paid`=false, `is_trailer_stored`=false, `convoy_id`=0 WHERE convoy_id = @convoiId', { ['@convoiId'] = convoy }, function(_)
         end)
     end
 end)
 
 
-ESX.RegisterServerCallback('transistep:getConvois', function(_, cb)
+ESX.RegisterServerCallback('transistep:getConvoys', function(_, cb)
     local convoys_list = {}
     local result = MySQL.Sync.fetchAll('SELECT * FROM `convoy_list`')
     if result[1] and #result > 0 then
         for _, v in pairs(result) do
             local name = v.id
-            local quantity = MySQL.Sync.fetchScalar('SELECT count(`convoy_id`) FROM `convoy_registered_list` WHERE `convoy_id` = @idConvoi', {
-                ['@idConvoi'] = name
+            local quantity = MySQL.Sync.fetchScalar('SELECT count(`convoy_id`) FROM `convoy_registered_list` WHERE `convoy_id` = @idConvoy', {
+                ['@idConvoy'] = name
             })
             table.insert(convoys_list, { name = name, quantity = quantity })
         end
