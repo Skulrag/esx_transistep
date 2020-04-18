@@ -125,31 +125,6 @@ Config.Uniforms = {
         }
     },
 
-    zepequeno_wear = {
-        male = {
-            ['tshirt_1'] = 23, ['tshirt_2'] = 1,
-            ['torso_1'] = 163, ['torso_2'] = 0,
-            ['decals_1'] = 0, ['decals_2'] = 0,
-            ['arms'] = 1,
-            ['pants_1'] = 74, ['pants_2'] = 3,
-            ['shoes_1'] = 37, ['shoes_2'] = 0,
-            ['helmet_1'] = 13, ['helmet_2'] = 0,
-            ['chain_1'] = 0, ['chain_2'] = 0,
-            ['ears_1'] = -1, ['ears_2'] = 0
-        },
-        female = {
-            ['tshirt_1'] = 0, ['tshirt_2'] = 2,
-            ['torso_1'] = 163, ['torso_2'] = 0,
-            ['decals_1'] = 0, ['decals_2'] = 0,
-            ['arms'] = 12,
-            ['pants_1'] = 27, ['pants_2'] = 0,
-            ['shoes_1'] = 38, ['shoes_2'] = 0,
-            ['helmet_1'] = 20, ['helmet_2'] = 2,
-            ['chain_1'] = 0, ['chain_2'] = 0,
-            ['ears_1'] = -1, ['ears_2'] = 0
-        }
-    },
-
     boss_wear = {
         male = {
             ['tshirt_1'] = 26, ['tshirt_2'] = 12,
