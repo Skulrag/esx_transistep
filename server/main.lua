@@ -259,7 +259,7 @@ AddEventHandler('transistep:storeTrailer', function(identifier)
     }, function(_)
     end)
 
-    TriggerEvent('esx_addoninventory:getSharedInventory', 'society_transistep_depot', function(inventory)
+    TriggerEvent('esx_addoninventory:getSharedInventory', 'society_transistep_warehouse', function(inventory)
         local item
         for _ = 1, Config.numberItemsPerTrailerStored do
             item = math.random(1, #Config.itemsList)

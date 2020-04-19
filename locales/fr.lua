@@ -84,5 +84,4 @@ Locales['fr'] = {
 	['get_paid'] = 'Appuyez sur ~INPUT_CONTEXT~ pour recevoir votre paie',
 	['storage_menu'] = 'Appuyez sur ~INPUT_CONTEXT~ pour accéder au dépôt',
 	['storage_menu_title'] = 'Dépôt Transistep'
-
 }
