@@ -2,7 +2,8 @@
 
 # EN / FR
 If you want to improve this script, feel free to send an issue with your idea and the enhancement tag.
-Si vous voulez améliorer le script, envoyer une issue avec votre idée, pensez au tag enhancement.
+
+Si vous voulez améliorer le script, envoyez une issue avec votre idée, pensez au tag enhancement.
 
 # EN
 *Scroll for the FR section*
